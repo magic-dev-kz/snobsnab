@@ -1,0 +1,234 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import '../styles/global.css';
+
+const categories = [
+  { name: 'Кровельные материалы', icon: '🏠', desc: 'Металлочерепица, профнастил, гибкая черепица, мембраны' },
+  { name: 'Утеплители', icon: '🧱', desc: 'Минвата, экструзия, пенопласт, PIR-плиты' },
+  { name: 'Сухие смеси', icon: '🪣', desc: 'Штукатурки, клеи, наливные полы, затирки' },
+  { name: 'Фасадные системы', icon: '🏗️', desc: 'Сайдинг, фиброцемент, вентфасады, декор' },
+  { name: 'Гидроизоляция', icon: '💧', desc: 'Битумные, полимерные, обмазочные, рулонные' },
+  { name: 'Крепёж и метизы', icon: '🔩', desc: 'Саморезы, анкеры, дюбели, профили' },
+];
+
+const advantages = [
+  { title: 'Прямые поставки', desc: 'Работаем с производителями напрямую — без посредников и наценок', icon: '🤝' },
+  { title: 'Цены ниже рынка', desc: 'Отсутствие склада и прямые контракты позволяют держать минимальные цены', icon: '💰' },
+  { title: 'Доставка 5-7 дней', desc: 'Оперативная логистика по всему Кузбассу и Сибири', icon: '🚛' },
+  { title: 'Комплексное снабжение', desc: 'Одна заявка — все материалы. Не нужно искать десятки поставщиков', icon: '📦' },
+  { title: 'Индивидуальный подход', desc: 'Подберём оптимальные материалы под ваш проект и бюджет', icon: '🎯' },
+  { title: 'Работаем с юрлицами', desc: 'Полный документооборот, НДС, отсрочка платежа для постоянных клиентов', icon: '📋' },
+];
+---
+
+<BaseLayout title="СнобСнаб — стройматериалы оптом в Кемерово">
+  
+  <!-- Hero Section -->
+  <section class="relative bg-gradient-to-br from-brand to-brand-light text-white py-20 lg:py-32 overflow-hidden">
+    <div class="absolute inset-0 opacity-10">
+      <div class="absolute top-10 left-10 w-72 h-72 bg-accent rounded-full blur-3xl"></div>
+      <div class="absolute bottom-10 right-10 w-96 h-96 bg-blue-400 rounded-full blur-3xl"></div>
+    </div>
+    <div class="relative max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="max-w-3xl">
+        <h1 class="text-4xl sm:text-5xl lg:text-6xl font-bold leading-tight mb-6">
+          Стройматериалы оптом
+          <span class="text-accent"> без переплат</span>
+        </h1>
+        <p class="text-xl text-blue-100 mb-8 leading-relaxed">
+          Прямые поставки от производителей в Кемерово и по всему Кузбассу. 
+          Без склада — без наценки. Экономьте до 30% на каждом заказе.
+        </p>
+        <div class="flex flex-col sm:flex-row gap-4">
+          <a href="#contact" class="bg-accent text-dark font-bold px-8 py-4 rounded-xl text-lg hover:bg-accent-hover transition text-center shadow-lg">
+            Запросить КП
+          </a>
+          <a href="#catalog" class="border-2 border-white/30 text-white font-semibold px-8 py-4 rounded-xl text-lg hover:bg-white/10 transition text-center">
+            Каталог материалов
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Trust Bar -->
+  <section class="bg-surface py-6 border-b">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
+        <div>
+          <p class="text-3xl font-bold text-brand">50+</p>
+          <p class="text-gray-500 text-sm">производителей-партнёров</p>
+        </div>
+        <div>
+          <p class="text-3xl font-bold text-brand">5-7</p>
+          <p class="text-gray-500 text-sm">дней доставка</p>
+        </div>
+        <div>
+          <p class="text-3xl font-bold text-brand">0₽</p>
+          <p class="text-gray-500 text-sm">за хранение</p>
+        </div>
+        <div>
+          <p class="text-3xl font-bold text-brand">30%</p>
+          <p class="text-gray-500 text-sm">экономия на закупках</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Catalog -->
+  <section id="catalog" class="py-16 lg:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl lg:text-4xl font-bold text-dark mb-4">Каталог материалов</h2>
+        <p class="text-gray-500 text-lg max-w-2xl mx-auto">Поставляем весь спектр стройматериалов для любых объектов — от частного дома до промышленного строительства</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {categories.map((cat) => (
+          <div class="group bg-white border border-gray-200 rounded-2xl p-6 hover:shadow-xl hover:border-accent transition-all duration-300 cursor-pointer">
+            <div class="text-4xl mb-4">{cat.icon}</div>
+            <h3 class="text-xl font-bold text-dark mb-2 group-hover:text-brand transition">{cat.name}</h3>
+            <p class="text-gray-500">{cat.desc}</p>
+            <div class="mt-4 text-accent font-semibold opacity-0 group-hover:opacity-100 transition">
+              Запросить цены →
+            </div>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- Advantages -->
+  <section id="advantages" class="py-16 lg:py-24 bg-surface">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl lg:text-4xl font-bold text-dark mb-4">Почему выбирают нас</h2>
+        <p class="text-gray-500 text-lg">Модель без склада — ваша выгода</p>
+      </div>
+      <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
+        {advantages.map((adv) => (
+          <div class="bg-white rounded-2xl p-6 shadow-sm hover:shadow-lg transition-all duration-300">
+            <div class="text-4xl mb-4">{adv.icon}</div>
+            <h3 class="text-lg font-bold text-dark mb-2">{adv.title}</h3>
+            <p class="text-gray-500">{adv.desc}</p>
+          </div>
+        ))}
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="py-16 lg:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl lg:text-4xl font-bold text-dark mb-4">Как мы работаем</h2>
+      </div>
+      <div class="grid md:grid-cols-4 gap-8">
+        <div class="text-center">
+          <div class="w-16 h-16 bg-accent/10 text-accent rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">1</div>
+          <h3 class="font-bold mb-2">Заявка</h3>
+          <p class="text-gray-500 text-sm">Отправляете список материалов или проект</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-accent/10 text-accent rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">2</div>
+          <h3 class="font-bold mb-2">Расчёт</h3>
+          <p class="text-gray-500 text-sm">Подбираем оптимальные материалы и считаем КП</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-accent/10 text-accent rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">3</div>
+          <h3 class="font-bold mb-2">Заказ</h3>
+          <p class="text-gray-500 text-sm">Оформляем заказ напрямую у производителей</p>
+        </div>
+        <div class="text-center">
+          <div class="w-16 h-16 bg-accent/10 text-accent rounded-full flex items-center justify-center text-2xl font-bold mx-auto mb-4">4</div>
+          <h3 class="font-bold mb-2">Доставка</h3>
+          <p class="text-gray-500 text-sm">Материалы на объекте через 5-7 дней</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Contact Form -->
+  <section id="contact" class="py-16 lg:py-24 bg-brand text-white">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="grid lg:grid-cols-2 gap-12 items-center">
+        <div>
+          <h2 class="text-3xl lg:text-4xl font-bold mb-6">Запросите коммерческое предложение</h2>
+          <p class="text-blue-100 text-lg mb-8">
+            Отправьте ваш список материалов или опишите проект — подготовим КП с оптимальными ценами в течение дня.
+          </p>
+          <div class="space-y-4">
+            <div class="flex items-center gap-3">
+              <span class="text-accent text-xl">✓</span>
+              <span>Бесплатный расчёт за 24 часа</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-accent text-xl">✓</span>
+              <span>Подбор аналогов для экономии</span>
+            </div>
+            <div class="flex items-center gap-3">
+              <span class="text-accent text-xl">✓</span>
+              <span>Фиксация цен на срок поставки</span>
+            </div>
+          </div>
+        </div>
+        <div class="bg-white rounded-2xl p-8 text-gray-900">
+          <form class="space-y-4">
+            <div>
+              <label class="block text-sm font-semibold mb-1">Имя</label>
+              <input type="text" placeholder="Как к вам обращаться?" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent outline-none" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">Телефон</label>
+              <input type="tel" placeholder="+7 (___) ___-__-__" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent outline-none" />
+            </div>
+            <div>
+              <label class="block text-sm font-semibold mb-1">Что нужно?</label>
+              <textarea placeholder="Опишите проект или перечислите материалы..." rows="4" class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-accent focus:border-transparent outline-none resize-none"></textarea>
+            </div>
+            <button type="submit" class="w-full bg-accent text-dark font-bold py-4 rounded-xl text-lg hover:bg-accent-hover transition shadow-lg">
+              Отправить заявку
+            </button>
+            <p class="text-xs text-gray-400 text-center">Нажимая кнопку, вы соглашаетесь с обработкой персональных данных</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Blog Preview -->
+  <section class="py-16 lg:py-24">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-12">
+        <h2 class="text-3xl lg:text-4xl font-bold text-dark mb-4">Блог о строительстве</h2>
+        <p class="text-gray-500 text-lg">Полезные статьи о выборе материалов, технологиях и экономии</p>
+      </div>
+      <div class="grid md:grid-cols-3 gap-8">
+        <article class="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition">
+          <div class="bg-gradient-to-br from-brand/10 to-accent/10 h-48 flex items-center justify-center text-6xl">🏠</div>
+          <div class="p-6">
+            <p class="text-accent text-sm font-semibold mb-2">Кровля</p>
+            <h3 class="font-bold text-lg mb-2">Как выбрать кровельный материал для сибирского климата</h3>
+            <p class="text-gray-500 text-sm">Сравниваем металлочерепицу, профнастил и гибкую черепицу для условий Кузбасса...</p>
+          </div>
+        </article>
+        <article class="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition">
+          <div class="bg-gradient-to-br from-brand/10 to-accent/10 h-48 flex items-center justify-center text-6xl">🧱</div>
+          <div class="p-6">
+            <p class="text-accent text-sm font-semibold mb-2">Утепление</p>
+            <h3 class="font-bold text-lg mb-2">Утепление дома в Кемерово: что выбрать при -40°C</h3>
+            <p class="text-gray-500 text-sm">Разбираем толщину утеплителя, точку росы и типичные ошибки при утеплении...</p>
+          </div>
+        </article>
+        <article class="bg-white border border-gray-200 rounded-2xl overflow-hidden hover:shadow-xl transition">
+          <div class="bg-gradient-to-br from-brand/10 to-accent/10 h-48 flex items-center justify-center text-6xl">💰</div>
+          <div class="p-6">
+            <p class="text-accent text-sm font-semibold mb-2">Экономия</p>
+            <h3 class="font-bold text-lg mb-2">5 способов сэкономить на стройматериалах без потери качества</h3>
+            <p class="text-gray-500 text-sm">Прямые поставки, аналоги, сезонность и другие лайфхаки для застройщиков...</p>
+          </div>
+        </article>
+      </div>
+    </div>
+  </section>
+
+</BaseLayout>

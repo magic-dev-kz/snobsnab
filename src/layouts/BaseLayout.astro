@@ -1,0 +1,95 @@
+---
+interface Props {
+  title: string;
+  description?: string;
+}
+
+const { title, description = 'СнобСнаб — стройматериалы оптом в Кемерово. Прямые поставки от производителей без посредников.' } = Astro.props;
+---
+
+<!doctype html>
+<html lang="ru">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="description" content={description} />
+    <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+    <title>{title}</title>
+  </head>
+  <body class="bg-white text-gray-900 antialiased">
+    <!-- Header -->
+    <header class="bg-brand text-white sticky top-0 z-50 shadow-lg">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16">
+          <a href="/" class="text-2xl font-bold tracking-tight">
+            СНОБ<span class="text-accent">СНАБ</span>
+          </a>
+          <nav class="hidden md:flex space-x-8">
+            <a href="#catalog" class="hover:text-accent transition">Каталог</a>
+            <a href="#advantages" class="hover:text-accent transition">Преимущества</a>
+            <a href="/blog" class="hover:text-accent transition">Блог</a>
+            <a href="#contact" class="hover:text-accent transition">Контакты</a>
+          </nav>
+          <a href="tel:+79001234567" class="hidden md:flex items-center gap-2 bg-accent text-dark font-semibold px-4 py-2 rounded-lg hover:bg-accent-hover transition">
+            📞 Позвонить
+          </a>
+          <!-- Mobile menu button -->
+          <button id="mobile-menu-btn" class="md:hidden text-white">
+            <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path>
+            </svg>
+          </button>
+        </div>
+      </div>
+      <!-- Mobile menu -->
+      <div id="mobile-menu" class="hidden md:hidden bg-brand-light px-4 py-4 space-y-3">
+        <a href="#catalog" class="block hover:text-accent">Каталог</a>
+        <a href="#advantages" class="block hover:text-accent">Преимущества</a>
+        <a href="/blog" class="block hover:text-accent">Блог</a>
+        <a href="#contact" class="block hover:text-accent">Контакты</a>
+      </div>
+    </header>
+
+    <main>
+      <slot />
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-dark text-gray-400 py-12">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="grid md:grid-cols-3 gap-8">
+          <div>
+            <h3 class="text-white text-xl font-bold mb-4">СНОБ<span class="text-accent">СНАБ</span></h3>
+            <p>Стройматериалы оптом в Кемерово. Прямые поставки от производителей без посредников.</p>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-4">Навигация</h4>
+            <ul class="space-y-2">
+              <li><a href="#catalog" class="hover:text-accent transition">Каталог</a></li>
+              <li><a href="#advantages" class="hover:text-accent transition">Преимущества</a></li>
+              <li><a href="/blog" class="hover:text-accent transition">Блог</a></li>
+              <li><a href="#contact" class="hover:text-accent transition">Контакты</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4 class="text-white font-semibold mb-4">Контакты</h4>
+            <ul class="space-y-2">
+              <li>📍 Кемерово</li>
+              <li>📞 <a href="tel:+79001234567" class="hover:text-accent transition">+7 (900) 123-45-67</a></li>
+              <li>📧 <a href="mailto:info@snobsnab.ru" class="hover:text-accent transition">info@snobsnab.ru</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="border-t border-gray-700 mt-8 pt-8 text-center text-sm">
+          © 2026 СнобСнаб. Все права защищены.
+        </div>
+      </div>
+    </footer>
+
+    <script>
+      const btn = document.getElementById('mobile-menu-btn');
+      const menu = document.getElementById('mobile-menu');
+      btn?.addEventListener('click', () => menu?.classList.toggle('hidden'));
+    </script>
+  </body>
+</html>
