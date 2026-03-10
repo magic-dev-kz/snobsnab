@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 
-import { readFileSync, writeFileSync, existsSync } from 'fs';
+import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
@@ -8,6 +8,7 @@ import { dirname, join } from 'path';
 const __dirname = dirname(fileURLToPath(import.meta.url));
 const ROOT = join(__dirname, '..');
 const BLOG_DIR = join(ROOT, 'src', 'content', 'blog');
+const IMAGES_DIR = join(ROOT, 'public', 'blog');
 const TOPICS_FILE = join(__dirname, 'topics.json');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
@@ -78,7 +79,7 @@ function pickTopic() {
   return topics[idx];
 }
 
-// --- Gemini API ---
+// --- Gemini API: генерация статьи ---
 async function generateArticle(topic) {
   const systemPrompt =
     'Ты SEO-копирайтер для компании СнобСнаб — поставщик стройматериалов в Кузбассе. ' +
@@ -127,8 +128,56 @@ async function generateArticle(topic) {
   return text;
 }
 
+// --- Imagen API: генерация обложки ---
+async function generateImage(topic, slug) {
+  mkdirSync(IMAGES_DIR, { recursive: true });
+  const imagePath = join(IMAGES_DIR, `${slug}.png`);
+
+  const prompt = `Professional construction photography: ${topic}. High quality, realistic, modern building materials, Siberian construction site, natural lighting, editorial style. No text or watermarks.`;
+
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${GEMINI_API_KEY}`;
+
+  const body = {
+    instances: [{ prompt }],
+    parameters: {
+      sampleCount: 1,
+      aspectRatio: '16:9',
+    },
+  };
+
+  console.log('🖼️  Генерация обложки через Imagen API...');
+
+  try {
+    const res = await fetch(url, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(body),
+    });
+
+    if (!res.ok) {
+      const err = await res.text();
+      console.warn(`⚠️  Imagen API error ${res.status}: ${err.slice(0, 200)}`);
+      return null;
+    }
+
+    const data = await res.json();
+    const b64 = data.predictions?.[0]?.bytesBase64Encoded;
+    if (!b64) {
+      console.warn('⚠️  Imagen вернул пустой ответ');
+      return null;
+    }
+
+    writeFileSync(imagePath, Buffer.from(b64, 'base64'));
+    console.log(`✅ Обложка создана: ${imagePath}`);
+    return `/blog/${slug}.png`;
+  } catch (e) {
+    console.warn(`⚠️  Ошибка генерации обложки: ${e.message}`);
+    return null;
+  }
+}
+
 // --- Сборка .md файла ---
-function buildMarkdown(topic, rawContent) {
+function buildMarkdown(topic, rawContent, imageSrc) {
   const lines = rawContent.trim().split('\n');
   let description = lines[0].replace(/^[#*_`]+/, '').trim();
   if (description.length > 160) description = description.slice(0, 157) + '...';
@@ -142,17 +191,29 @@ function buildMarkdown(topic, rawContent) {
   const icon = CATEGORY_ICONS[category] || '📦';
   const date = new Date().toISOString().split('T')[0];
 
-  const frontmatter = [
+  const frontmatterLines = [
     '---',
     `title: "${topic.replace(/"/g, '\\"')}"`,
     `description: "${description.replace(/"/g, '\\"')}"`,
     `date: "${date}"`,
     `category: "${category}"`,
     `icon: "${icon}"`,
-    '---',
-  ].join('\n');
+  ];
 
-  return `${frontmatter}\n\n${body}\n`;
+  if (imageSrc) {
+    frontmatterLines.push(`image: "${imageSrc}"`);
+    frontmatterLines.push(`ogImage: "${imageSrc}"`);
+  }
+
+  frontmatterLines.push('---');
+  const frontmatter = frontmatterLines.join('\n');
+
+  // Вставляем обложку в начало статьи
+  const imageBlock = imageSrc
+    ? `![${topic}](${imageSrc})\n\n`
+    : '';
+
+  return `${frontmatter}\n\n${imageBlock}${body}\n`;
 }
 
 // --- Main ---
@@ -166,15 +227,20 @@ async function main() {
     process.exit(1);
   }
 
-  const rawContent = await generateArticle(topic);
-  const markdown = buildMarkdown(topic, rawContent);
+  // Генерация статьи и обложки параллельно
+  const [rawContent, imageSrc] = await Promise.all([
+    generateArticle(topic),
+    generateImage(topic, slug),
+  ]);
+
+  const markdown = buildMarkdown(topic, rawContent, imageSrc);
 
   writeFileSync(filePath, markdown, 'utf-8');
   console.log(`✅ Статья создана: ${filePath}`);
 
   // Git add + commit + push
   try {
-    execSync(`git add "${filePath}"`, { cwd: ROOT, stdio: 'inherit' });
+    execSync('git add -A', { cwd: ROOT, stdio: 'inherit' });
     execSync(`git commit -m "blog: ${topic}"`, { cwd: ROOT, stdio: 'inherit' });
     execSync('git push', { cwd: ROOT, stdio: 'inherit' });
     console.log('📤 Запушено в репозиторий');
@@ -182,8 +248,7 @@ async function main() {
     console.warn('⚠️  Git push не удался — возможно, нет remote или нет доступа');
   }
 
-  const urlSlug = slug;
-  console.log(`\n🔗 URL статьи: https://snobsnab.ru/blog/${urlSlug}/`);
+  console.log(`\n🔗 URL статьи: https://snobsnab.ru/blog/${slug}/`);
 }
 
 main().catch((err) => {
