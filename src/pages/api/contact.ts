@@ -1,6 +1,6 @@
 import type { APIRoute } from 'astro';
 
-const BOT_TOKEN = '7819aborting741:AAH2pMmA-JrsBNqkFTn4PLACEHOLDER';
+const BOT_TOKEN = '8499837060:AAHCIx50GOuLMQpAenby3NkMc1aNQFbtZ74';
 const CHAT_ID = '442086126';
 
 export const prerender = false;
