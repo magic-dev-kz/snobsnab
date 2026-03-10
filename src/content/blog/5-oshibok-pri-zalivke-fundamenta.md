@@ -4,7 +4,7 @@ description: "Разбираем типичные ошибки при устро
 date: "2026-01-15"
 category: "Фундамент"
 icon: "🏗️"
-ogImage: "/blog/images/oshibki-fundamenta.jpg"
+ogImage: "/blog/images/oshibki-fundamenta.png"
 ---
 
 ## Фундамент — это не то, на чём стоит экономить

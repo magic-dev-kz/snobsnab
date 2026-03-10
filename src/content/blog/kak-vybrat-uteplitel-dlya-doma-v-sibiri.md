@@ -4,7 +4,7 @@ description: "Подробное сравнение минваты, пенопо
 date: "2026-03-05"
 category: "Утепление"
 icon: "🧱"
-ogImage: "/blog/images/uteplitel-sibir.jpg"
+ogImage: "/blog/images/uteplitel-sibir.png"
 ---
 
 ## Почему утепление в Сибири — это не то же самое, что в средней полосе
