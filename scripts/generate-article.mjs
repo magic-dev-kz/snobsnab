@@ -1,5 +1,11 @@
 #!/usr/bin/env node
 
+/**
+ * СнобСнаб Content Pipeline v2
+ * 3-этапный конвейер: Gemini (исследование) → Claude (текст) → Imagen (обложка)
+ * Архитектура: Макс | Реализация: Мо
+ */
+
 import { readFileSync, writeFileSync, existsSync, mkdirSync } from 'fs';
 import { execSync } from 'child_process';
 import { fileURLToPath } from 'url';
@@ -13,9 +19,15 @@ const TOPICS_FILE = join(__dirname, 'topics.json');
 
 const GEMINI_API_KEY = process.env.GEMINI_API_KEY;
 if (!GEMINI_API_KEY) {
-  console.error('❌ Установите переменную окружения GEMINI_API_KEY');
+  console.error('❌ Установите GEMINI_API_KEY');
   process.exit(1);
 }
+
+// --- Endpoints ---
+const CCPROXY_CLAUDE = 'http://localhost:8000/claude/v1/messages';
+const GEMINI_SEARCH_URL = 'http://localhost:8317/v1/chat/completions';
+const GEMINI_IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${GEMINI_API_KEY}`;
+const GEMINI_FLASH_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 // --- Транслитерация ---
 const TRANSLIT_MAP = {
@@ -27,16 +39,12 @@ const TRANSLIT_MAP = {
 };
 
 function transliterate(text) {
-  return text
-    .toLowerCase()
-    .split('')
-    .map((ch) => TRANSLIT_MAP[ch] ?? ch)
-    .join('')
-    .replace(/[^a-z0-9]+/g, '-')
-    .replace(/^-|-$/g, '');
+  return text.toLowerCase().split('')
+    .map((ch) => TRANSLIT_MAP[ch] ?? ch).join('')
+    .replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '');
 }
 
-// --- Категория по ключевым словам ---
+// --- Категории ---
 const CATEGORY_KEYWORDS = {
   'Кровля': ['кровл', 'крыш', 'металлочерепиц', 'профлист', 'мягк', 'водосточ', 'снегов'],
   'Утепление': ['утепл', 'теплоизоляц', 'минват', 'пенополистирол', 'тёпл', 'тепл'],
@@ -50,128 +58,198 @@ const CATEGORY_KEYWORDS = {
 
 function detectCategory(topic) {
   const lower = topic.toLowerCase();
-  for (const [category, keywords] of Object.entries(CATEGORY_KEYWORDS)) {
-    if (keywords.some((kw) => lower.includes(kw))) return category;
+  for (const [cat, kws] of Object.entries(CATEGORY_KEYWORDS)) {
+    if (kws.some((kw) => lower.includes(kw))) return cat;
   }
   return 'Стройматериалы';
 }
 
 const CATEGORY_ICONS = {
-  'Кровля': '🏠',
-  'Утепление': '🧱',
-  'Фундамент': '🏗️',
-  'Фасады': '🏢',
-  'Стеновые материалы': '🧱',
-  'Инструменты': '🔧',
-  'Нормативы': '📋',
-  'Общее строительство': '🏡',
-  'Стройматериалы': '📦',
+  'Кровля': '🏠', 'Утепление': '🧱', 'Фундамент': '🏗️', 'Фасады': '🏢',
+  'Стеновые материалы': '🧱', 'Инструменты': '🔧', 'Нормативы': '📋',
+  'Общее строительство': '🏡', 'Стройматериалы': '📦',
 };
 
 // --- Выбор темы ---
 function pickTopic() {
-  const arg = process.argv[2];
+  const arg = process.argv.find(a => !a.startsWith('-') && a !== process.argv[0] && a !== process.argv[1]);
   if (arg) return arg;
-
   const topics = JSON.parse(readFileSync(TOPICS_FILE, 'utf-8'));
   const idx = Math.floor(Math.random() * topics.length);
-  console.log(`🎲 Случайная тема: "${topics[idx]}"`);
+  console.log(`🎲 Тема: "${topics[idx]}"`);
   return topics[idx];
 }
 
-// --- Gemini API: генерация статьи ---
-async function generateArticle(topic) {
-  const systemPrompt =
-    'Ты SEO-копирайтер для компании СнобСнаб — поставщик стройматериалов в Кузбассе. ' +
-    'Пиши экспертные статьи 800-1200 слов. Стиль: профессиональный но понятный. ' +
-    'Целевая аудитория: строители и заказчики в Сибири. ' +
-    'Используй markdown заголовки h2/h3, списки, таблицы где уместно. Не используй h1. ' +
-    'В конце — блок с призывом обратиться в СнобСнаб.';
+// ============================================================
+// ЭТАП 1: Исследование (Gemini + Google Search Grounding)
+// ============================================================
+async function research(topic) {
+  console.log('🔍 Этап 1: Исследование через Gemini + Search...');
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
+  try {
+    const res = await fetch(GEMINI_SEARCH_URL, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        model: 'gemini-2.5-flash',
+        messages: [{
+          role: 'user',
+          content: `Исследуй тему для статьи строительного сайта в Кузбассе: "${topic}".
+Собери:
+1. Ключевые факты (5-10 пунктов) с реальными цифрами
+2. Актуальные цены в России (2025-2026)
+3. Особенности для Сибири/Кузбасса (климат -40°C, грунты, сейсмика)
+4. LSI-ключевые слова для SEO (10 штук)
+5. Сравнительные характеристики материалов если применимо
 
-  const body = {
-    system_instruction: { parts: [{ text: systemPrompt }] },
-    contents: [
-      {
-        role: 'user',
-        parts: [
-          {
-            text: `Напиши SEO-статью на тему: "${topic}". Верни только текст статьи в формате Markdown (без frontmatter, без заголовка h1). Первым делом напиши краткое SEO-описание статьи (одно предложение, до 160 символов) на отдельной строке, затем пустую строку, затем текст статьи.`,
-          },
-        ],
-      },
-    ],
-    generationConfig: {
-      temperature: 0.7,
-      maxOutputTokens: 4096,
-    },
-  };
+Формат: JSON с полями { facts: [], prices: [], siberia_specifics: [], lsi_keywords: [], comparisons: [] }`
+        }],
+        temperature: 0.3,
+        max_tokens: 2000,
+      }),
+    });
 
-  console.log('⏳ Генерация статьи через Gemini API...');
-
-  const res = await fetch(url, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(body),
-  });
-
-  if (!res.ok) {
-    const err = await res.text();
-    throw new Error(`Gemini API error ${res.status}: ${err}`);
+    if (res.ok) {
+      const data = await res.json();
+      const text = data.choices?.[0]?.message?.content;
+      if (text) {
+        console.log('  ✅ Исследование готово');
+        return text;
+      }
+    }
+  } catch (e) {
+    console.warn(`  ⚠️ Gemini proxy недоступен: ${e.message}`);
   }
 
+  // Fallback: прямой Gemini API (без grounding, но с данными)
+  console.log('  ↩️ Fallback: прямой Gemini Flash...');
+  const res = await fetch(GEMINI_FLASH_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      contents: [{ role: 'user', parts: [{ text:
+        `Исследуй тему: "${topic}" для строительного сайта в Кузбассе.
+Дай 5-10 фактов с цифрами, цены в России, особенности Сибири, 10 LSI-ключевых слов.
+Формат: свободный текст с пунктами.` }] }],
+      generationConfig: { temperature: 0.3, maxOutputTokens: 2000 },
+    }),
+  });
   const data = await res.json();
-  const text = data.candidates?.[0]?.content?.parts?.[0]?.text;
-  if (!text) throw new Error('Пустой ответ от Gemini API');
-
-  return text;
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
 }
 
-// --- Imagen API: генерация обложки ---
+// ============================================================
+// ЭТАП 2: Написание текста (Claude через CCProxy)
+// ============================================================
+async function writeArticle(topic, facts) {
+  console.log('✍️  Этап 2: Написание через Claude...');
+
+  try {
+    const res = await fetch(CCPROXY_CLAUDE, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'x-api-key': 'sk-placeholder',
+        'anthropic-version': '2023-06-01',
+      },
+      body: JSON.stringify({
+        model: 'claude-sonnet-4-20250514',
+        max_tokens: 4096,
+        system: `Ты SEO-копирайтер для СнобСнаб — поставщик стройматериалов в Кузбассе.
+Пиши экспертные статьи 1200-1500 слов. Стиль: профессиональный, но понятный.
+Целевая аудитория: строители, прорабы и заказчики в Сибири.
+Используй markdown: h2/h3, списки, таблицы где уместно. НЕ используй h1.
+В конце — призыв обратиться в СнобСнаб.
+Все факты и цифры должны быть подкреплены данными из исследования.`,
+        messages: [{
+          role: 'user',
+          content: `Напиши SEO-статью на тему: "${topic}"
+
+РЕЗУЛЬТАТЫ ИССЛЕДОВАНИЯ:
+${facts}
+
+ТРЕБОВАНИЯ:
+- 1200-1500 слов
+- Используй реальные факты и цифры из исследования
+- Адаптируй под сибирский климат
+- Первая строка: SEO-описание до 160 символов
+- Затем пустая строка и текст статьи
+- Формат: Markdown без frontmatter и h1`
+        }],
+      }),
+    });
+
+    if (res.ok) {
+      const data = await res.json();
+      const text = data.content?.[0]?.text;
+      if (text) {
+        console.log('  ✅ Claude написал статью');
+        return text;
+      }
+    }
+
+    const errText = await res.text();
+    console.warn(`  ⚠️ Claude error ${res.status}: ${errText.slice(0, 200)}`);
+  } catch (e) {
+    console.warn(`  ⚠️ CCProxy недоступен: ${e.message}`);
+  }
+
+  // Fallback: Gemini Flash
+  console.log('  ↩️ Fallback: Gemini Flash для текста...');
+  const res = await fetch(GEMINI_FLASH_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      system_instruction: { parts: [{ text:
+        'Ты SEO-копирайтер для СнобСнаб — поставщик стройматериалов в Кузбассе. ' +
+        'Пиши экспертные статьи 1200-1500 слов. Стиль: профессиональный но понятный. ' +
+        'Целевая аудитория: строители и заказчики в Сибири. ' +
+        'Используй markdown h2/h3, списки, таблицы. Не используй h1. ' +
+        'В конце — призыв обратиться в СнобСнаб.' }] },
+      contents: [{ role: 'user', parts: [{ text:
+        `Напиши SEO-статью на тему: "${topic}"\nФакты:\n${facts}\nПервая строка: SEO-описание до 160 символов. Затем текст.` }] }],
+      generationConfig: { temperature: 0.7, maxOutputTokens: 4096 },
+    }),
+  });
+  const data = await res.json();
+  return data.candidates?.[0]?.content?.parts?.[0]?.text || '';
+}
+
+// ============================================================
+// ЭТАП 3: Обложка (Imagen 4.0)
+// ============================================================
 async function generateImage(topic, slug) {
   mkdirSync(IMAGES_DIR, { recursive: true });
   const imagePath = join(IMAGES_DIR, `${slug}.png`);
 
   const prompt = `Professional construction photography: ${topic}. High quality, realistic photo, modern building materials, construction site in winter Siberia. Natural lighting, clean editorial style. Absolutely NO text, NO letters, NO words, NO labels, NO watermarks, NO logos on the image.`;
 
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${GEMINI_API_KEY}`;
-
-  const body = {
-    instances: [{ prompt }],
-    parameters: {
-      sampleCount: 1,
-      aspectRatio: '16:9',
-    },
-  };
-
-  console.log('🖼️  Генерация обложки через Imagen API...');
+  console.log('🖼️  Этап 3: Генерация обложки через Imagen...');
 
   try {
-    const res = await fetch(url, {
+    const res = await fetch(GEMINI_IMAGE_URL, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(body),
+      body: JSON.stringify({
+        instances: [{ prompt }],
+        parameters: { sampleCount: 1, aspectRatio: '16:9' },
+      }),
     });
 
     if (!res.ok) {
-      const err = await res.text();
-      console.warn(`⚠️  Imagen API error ${res.status}: ${err.slice(0, 200)}`);
+      console.warn(`  ⚠️ Imagen error ${res.status}`);
       return null;
     }
 
     const data = await res.json();
     const b64 = data.predictions?.[0]?.bytesBase64Encoded;
-    if (!b64) {
-      console.warn('⚠️  Imagen вернул пустой ответ');
-      return null;
-    }
+    if (!b64) { console.warn('  ⚠️ Пустой ответ Imagen'); return null; }
 
     writeFileSync(imagePath, Buffer.from(b64, 'base64'));
-    console.log(`✅ Обложка создана: ${imagePath}`);
+    console.log(`  ✅ Обложка: ${imagePath}`);
     return `/blog/${slug}.png`;
   } catch (e) {
-    console.warn(`⚠️  Ошибка генерации обложки: ${e.message}`);
+    console.warn(`  ⚠️ Imagen failed: ${e.message}`);
     return null;
   }
 }
@@ -182,7 +260,6 @@ function buildMarkdown(topic, rawContent, imageSrc) {
   let description = lines[0].replace(/^[#*_`]+/, '').trim();
   if (description.length > 160) description = description.slice(0, 157) + '...';
 
-  // Остальное — тело статьи (пропускаем первую строку + пустую)
   let bodyStart = 1;
   while (bodyStart < lines.length && lines[bodyStart].trim() === '') bodyStart++;
   const body = lines.slice(bodyStart).join('\n');
@@ -191,7 +268,7 @@ function buildMarkdown(topic, rawContent, imageSrc) {
   const icon = CATEGORY_ICONS[category] || '📦';
   const date = new Date().toISOString().split('T')[0];
 
-  const frontmatterLines = [
+  const fm = [
     '---',
     `title: "${topic.replace(/"/g, '\\"')}"`,
     `description: "${description.replace(/"/g, '\\"')}"`,
@@ -199,21 +276,11 @@ function buildMarkdown(topic, rawContent, imageSrc) {
     `category: "${category}"`,
     `icon: "${icon}"`,
   ];
+  if (imageSrc) { fm.push(`image: "${imageSrc}"`); fm.push(`ogImage: "${imageSrc}"`); }
+  fm.push('---');
 
-  if (imageSrc) {
-    frontmatterLines.push(`image: "${imageSrc}"`);
-    frontmatterLines.push(`ogImage: "${imageSrc}"`);
-  }
-
-  frontmatterLines.push('---');
-  const frontmatter = frontmatterLines.join('\n');
-
-  // Вставляем обложку в начало статьи
-  const imageBlock = imageSrc
-    ? `![${topic}](${imageSrc})\n\n`
-    : '';
-
-  return `${frontmatter}\n\n${imageBlock}${body}\n`;
+  const imageBlock = imageSrc ? `![${topic}](${imageSrc})\n\n` : '';
+  return `${fm.join('\n')}\n\n${imageBlock}${body}\n`;
 }
 
 // --- Main ---
@@ -223,42 +290,37 @@ async function main() {
   const filePath = join(BLOG_DIR, `${slug}.md`);
 
   if (existsSync(filePath)) {
-    console.error(`⚠️  Файл уже существует: ${filePath}`);
+    console.error(`⚠️ Файл уже существует: ${filePath}`);
     process.exit(1);
   }
 
-  // Генерация статьи и обложки параллельно
-  const [rawContent, imageSrc] = await Promise.all([
-    generateArticle(topic),
+  // Этап 1 + 3 параллельно, Этап 2 после Этапа 1
+  const [facts, imageSrc] = await Promise.all([
+    research(topic),
     generateImage(topic, slug),
   ]);
 
+  const rawContent = await writeArticle(topic, facts);
   const markdown = buildMarkdown(topic, rawContent, imageSrc);
 
   writeFileSync(filePath, markdown, 'utf-8');
-  console.log(`✅ Статья создана: ${filePath}`);
+  console.log(`\n✅ Статья создана: ${filePath}`);
 
-  // Git: push только с флагом --publish
+  // Git push только с --publish
   const shouldPublish = process.argv.includes('--publish');
   if (shouldPublish) {
     try {
       execSync('git add -A', { cwd: ROOT, stdio: 'inherit' });
       execSync(`git commit -m "blog: ${topic}"`, { cwd: ROOT, stdio: 'inherit' });
       execSync('git push', { cwd: ROOT, stdio: 'inherit' });
-      console.log('📤 Запушено в репозиторий');
-    } catch {
-      console.warn('⚠️  Git push не удался');
-    }
-    console.log(`\n🔗 URL статьи: https://snobsnab.ru/blog/${slug}/`);
+      console.log('📤 Запушено');
+    } catch { console.warn('⚠️ Git push не удался'); }
+    console.log(`🔗 https://snobsnab.ru/blog/${slug}/`);
   } else {
-    console.log('\n📋 Статья создана локально (режим предмодерации)');
-    console.log(`📄 Файл: ${filePath}`);
-    if (imageSrc) console.log(`🖼️  Обложка: ${join(ROOT, 'public', 'blog', slug + '.png')}`);
-    console.log('💡 Для публикации запустите с --publish или вручную: git add -A && git commit && git push');
+    console.log('\n📋 Режим предмодерации — не опубликовано');
+    console.log(`📄 ${filePath}`);
+    if (imageSrc) console.log(`🖼️  ${join(ROOT, 'public', 'blog', slug + '.png')}`);
   }
 }
 
-main().catch((err) => {
-  console.error('❌', err.message);
-  process.exit(1);
-});
+main().catch((err) => { console.error('❌', err.message); process.exit(1); });
