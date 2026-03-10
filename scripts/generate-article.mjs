@@ -238,17 +238,24 @@ async function main() {
   writeFileSync(filePath, markdown, 'utf-8');
   console.log(`✅ Статья создана: ${filePath}`);
 
-  // Git add + commit + push
-  try {
-    execSync('git add -A', { cwd: ROOT, stdio: 'inherit' });
-    execSync(`git commit -m "blog: ${topic}"`, { cwd: ROOT, stdio: 'inherit' });
-    execSync('git push', { cwd: ROOT, stdio: 'inherit' });
-    console.log('📤 Запушено в репозиторий');
-  } catch {
-    console.warn('⚠️  Git push не удался — возможно, нет remote или нет доступа');
+  // Git: push только с флагом --publish
+  const shouldPublish = process.argv.includes('--publish');
+  if (shouldPublish) {
+    try {
+      execSync('git add -A', { cwd: ROOT, stdio: 'inherit' });
+      execSync(`git commit -m "blog: ${topic}"`, { cwd: ROOT, stdio: 'inherit' });
+      execSync('git push', { cwd: ROOT, stdio: 'inherit' });
+      console.log('📤 Запушено в репозиторий');
+    } catch {
+      console.warn('⚠️  Git push не удался');
+    }
+    console.log(`\n🔗 URL статьи: https://snobsnab.ru/blog/${slug}/`);
+  } else {
+    console.log('\n📋 Статья создана локально (режим предмодерации)');
+    console.log(`📄 Файл: ${filePath}`);
+    if (imageSrc) console.log(`🖼️  Обложка: ${join(ROOT, 'public', 'blog', slug + '.png')}`);
+    console.log('💡 Для публикации запустите с --publish или вручную: git add -A && git commit && git push');
   }
-
-  console.log(`\n🔗 URL статьи: https://snobsnab.ru/blog/${slug}/`);
 }
 
 main().catch((err) => {
