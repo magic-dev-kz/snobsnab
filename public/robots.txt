@@ -1,0 +1,3 @@
+User-agent: *
+Allow: /
+Sitemap: https://snobsnab.ru/sitemap-index.xml
