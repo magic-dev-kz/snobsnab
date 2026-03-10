@@ -222,7 +222,7 @@ async function generateImage(topic, slug) {
   mkdirSync(IMAGES_DIR, { recursive: true });
   const imagePath = join(IMAGES_DIR, `${slug}.png`);
 
-  const prompt = `Professional construction photography: ${topic}. High quality, realistic photo, modern building materials, construction site in winter Siberia. Natural lighting, clean editorial style. Absolutely NO text, NO letters, NO words, NO labels, NO watermarks, NO logos on the image.`;
+  const prompt = `Professional construction photography: ${topic}. High quality, realistic photo, modern building materials, construction site in winter Siberia. Natural lighting, clean editorial style. Absolutely NO people, NO faces, NO humans, NO text, NO letters, NO words, NO labels, NO watermarks, NO logos on the image.`;
 
   console.log('🖼️  Этап 3: Генерация обложки через Imagen...');
 
@@ -232,7 +232,7 @@ async function generateImage(topic, slug) {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
         instances: [{ prompt }],
-        parameters: { sampleCount: 1, aspectRatio: '16:9' },
+        parameters: { sampleCount: 1, aspectRatio: '16:9', personGeneration: 'dont_allow' },
       }),
     });
 
