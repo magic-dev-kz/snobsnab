@@ -4,7 +4,7 @@ description: "Детальное сравнение профнастила и м
 date: "2026-02-20"
 category: "Кровля"
 icon: "🏠"
-ogImage: "https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=1200"
+ogImage: "/blog/images/proflist-metallocherepitsa.jpg"
 ---
 
 ## Два лидера рынка кровельных материалов
