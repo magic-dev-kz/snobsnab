@@ -133,7 +133,7 @@ async function generateImage(topic, slug) {
   mkdirSync(IMAGES_DIR, { recursive: true });
   const imagePath = join(IMAGES_DIR, `${slug}.png`);
 
-  const prompt = `Professional construction photography: ${topic}. High quality, realistic, modern building materials, Siberian construction site, natural lighting, editorial style. No text or watermarks.`;
+  const prompt = `Professional construction photography: ${topic}. High quality, realistic photo, modern building materials, construction site in winter Siberia. Natural lighting, clean editorial style. Absolutely NO text, NO letters, NO words, NO labels, NO watermarks, NO logos on the image.`;
 
   const url = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${GEMINI_API_KEY}`;
 
