@@ -45,6 +45,14 @@ function formatDate(dateStr: string): string {
       </div>
     </header>
 
+    {post.data.ogImage && (
+      <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 -mt-8 relative z-10">
+        <div class="rounded-2xl overflow-hidden shadow-xl aspect-[16/9]">
+          <img src={post.data.ogImage} alt={post.data.title} class="w-full h-full object-cover" />
+        </div>
+      </div>
+    )}
+
     <div class="py-12 lg:py-16">
       <div class="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 prose prose-lg prose-gray max-w-none
         [&_h2]:text-2xl [&_h2]:font-bold [&_h2]:text-dark [&_h2]:mt-10 [&_h2]:mb-4
