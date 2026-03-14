@@ -1,0 +1,29 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+---
+
+<BaseLayout title="404 - Страница не найдена | СнобСнаб" description="Страница не найдена. Вернитесь на главную СнобСнаб.">
+  <section class="py-24 min-h-[60vh] flex items-center">
+    <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      
+      <div class="inline-block brutal-card p-12 bg-white">
+        <p class="text-8xl md:text-9xl font-extrabold font-mono text-accent leading-none mb-4">404</p>
+        <div class="w-24 h-1 bg-brand mx-auto mb-8"></div>
+        <h1 class="text-3xl md:text-4xl font-extrabold uppercase text-brand mb-4">Страница не найдена</h1>
+        <p class="text-gray-500 text-lg mb-10 max-w-md mx-auto">
+          Похоже, эта страница переехала или никогда не существовала. Но материалы для ремонта - точно у нас.
+        </p>
+        
+        <div class="flex flex-col sm:flex-row gap-4 justify-center">
+          <a href="/" class="brutal-button px-8 py-4 text-center">
+            На главную
+          </a>
+          <a href="/blog" class="inline-block px-8 py-4 font-bold uppercase text-sm border-2 border-brand bg-white text-brand hover:bg-brand hover:text-white transition-colors shadow-[4px_4px_0px_#1A1A1A] active:shadow-none active:translate-x-1 active:translate-y-1">
+            Читать блог
+          </a>
+        </div>
+      </div>
+
+    </div>
+  </section>
+</BaseLayout>
