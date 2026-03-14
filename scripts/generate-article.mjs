@@ -250,8 +250,34 @@ async function generateImage(topic, slug) {
     return `/blog/${slug}.png`;
   } catch (e) {
     console.warn(`  ⚠️ Imagen failed: ${e.message}`);
-    return null;
   }
+
+  // Fallback: Gemini 2.5 Flash Image
+  console.log('  ↩️ Fallback: Gemini 2.5 Flash Image...');
+  try {
+    const flashImageUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-image:generateContent?key=${GEMINI_API_KEY}`;
+    const res2 = await fetch(flashImageUrl, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        contents: [{ role: 'user', parts: [{ text: `Generate a professional photo-realistic image: ${topic}. Construction materials, modern building site. No text, no people, no watermarks. Clean editorial style, warm lighting.` }] }],
+        generationConfig: { responseModalities: ['IMAGE', 'TEXT'] },
+      }),
+    });
+    if (res2.ok) {
+      const data2 = await res2.json();
+      const inlineData = data2.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData;
+      if (inlineData?.data) {
+        writeFileSync(imagePath, Buffer.from(inlineData.data, 'base64'));
+        console.log(`  ✅ Обложка (Flash Image): ${imagePath}`);
+        return `/blog/${slug}.png`;
+      }
+    }
+  } catch (e2) {
+    console.warn(`  ⚠️ Flash Image failed: ${e2.message}`);
+  }
+
+  return null;
 }
 
 // --- Сборка .md файла ---
