@@ -1,0 +1,29 @@
+---
+// HowWeWork.astro — Таймлайн "Как мы работаем" V2 (Необрутализм)
+const steps = [
+  { num: '01', title: 'Заявка', desc: 'Оставляете заявку на сайте или звоните. Менеджер перезвонит в течение 15 минут.' },
+  { num: '02', title: 'Расчет', desc: 'Обсуждаем объект, объём, сроки. Подбираем материал под бюджет.' },
+  { num: '03', title: 'Договор', desc: 'Заключаем договор, фиксируем цену и дату поставки. Любая форма оплаты.' },
+  { num: '04', title: 'Доставка', desc: 'Доставляем на объект в указанный срок. Разгрузка включена.' },
+];
+---
+<section class="py-16 relative">
+  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+    <!-- Заголовок -->
+    <div class="mb-12">
+      <span class="bg-brand text-accent font-mono text-sm px-2 py-1 font-bold tracking-widest uppercase">Процесс</span>
+      <h2 class="text-3xl lg:text-4xl font-extrabold text-brand tracking-tight uppercase mt-4">Как мы работаем</h2>
+    </div>
+
+    <!-- Таймлайн (брутальный блок) -->
+    <div class="relative bg-white border-2 border-brand p-0 flex flex-col lg:flex-row shadow-[8px_8px_0px_#1A1A1A] transition-all hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[10px_10px_0px_#1A1A1A]">
+      {steps.map((step, i) => (
+        <div class={`flex-1 p-6 border-b-2 lg:border-b-0 ${i !== steps.length - 1 ? 'lg:border-r-2' : ''} border-brand group hover:bg-accent hover:text-white transition-colors duration-200 cursor-default ${i === 2 ? 'bg-brand text-white' : 'bg-white text-brand'}`}>
+          <div class={`font-mono text-3xl font-bold mb-4 ${i === 2 ? 'text-accent' : 'text-brand group-hover:text-white'}`}>{step.num}.</div>
+          <h3 class="text-lg font-bold mb-2 uppercase tracking-wide">{step.title}</h3>
+          <p class={`text-sm leading-relaxed ${i === 2 ? 'text-gray-400' : 'text-gray-600 group-hover:text-white/90'}`}>{step.desc}</p>
+        </div>
+      ))}
+    </div>
+  </div>
+</section>

@@ -1,8 +1,24 @@
 ---
 import BaseLayout from '../layouts/BaseLayout.astro';
 import BlogCard from '../components/BlogCard.astro';
+import HowWeWork from '../components/HowWeWork.astro';
 import { getCollection } from 'astro:content';
 import '../styles/global.css';
+
+// Иконки
+import IconPlumbing from '../components/icons/IconPlumbing.astro';
+import IconFlooring from '../components/icons/IconFlooring.astro';
+import IconCeramics from '../components/icons/IconCeramics.astro';
+import IconPaint from '../components/icons/IconPaint.astro';
+import IconWallpaper from '../components/icons/IconWallpaper.astro';
+import IconLighting from '../components/icons/IconLighting.astro';
+
+import IconDirect from '../components/icons/IconDirect.astro';
+import IconPrice from '../components/icons/IconPrice.astro';
+import IconDeliveryFast from '../components/icons/IconDeliveryFast.astro';
+import IconComplex from '../components/icons/IconComplex.astro';
+import IconPersonal from '../components/icons/IconPersonal.astro';
+import IconLegal from '../components/icons/IconLegal.astro';
 
 // Загружаем последние 3 статьи из коллекции
 const allPosts = await getCollection('blog');
@@ -12,137 +28,138 @@ const latestPosts = allPosts
 
 // Заглушки на случай если статей ещё нет
 const fallbackPosts = [
-  { id: 'f1', data: { title: 'Сравнение утеплителей: Минвата vs XPS', description: 'Подробный разбор характеристик, цен и областей применения самых популярных утеплителей на строительном рынке Кузбасса.', category: 'Технологии', date: '', icon: '🏗️', ogImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800' }},
-  { id: 'f2', data: { title: 'Профлист или металлочерепица: что выбрать для кровли', description: 'Аналитика от экспертов СнобСнаб. Детальное сравнение двух лидеров рынка кровельных материалов.', category: 'Кровля', date: '', icon: '🏠', ogImage: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=800' }},
-  { id: 'f3', data: { title: '5 ошибок при заливке фундамента', description: 'Разбираем самые частые ошибки подрядчиков и как их избежать при строительстве в условиях Кузбасса.', category: 'Инструкции', date: '', icon: '💧', ogImage: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800' }},
+  { id: 'f1', data: { title: 'Сравнение утеплителей: Минвата vs XPS', description: 'Подробный разбор характеристик, цен и областей применения.', category: 'Технологии', date: '', ogImage: 'https://images.unsplash.com/photo-1504307651254-35680f356dfd?auto=format&fit=crop&q=80&w=800' }},
+  { id: 'f2', data: { title: 'Профлист или металлочерепица: что выбрать', description: 'Аналитика от экспертов СнобСнаб. Детальное сравнение.', category: 'Кровля', date: '', ogImage: 'https://images.unsplash.com/photo-1503387762-592deb58ef4e?auto=format&fit=crop&q=80&w=800' }},
+  { id: 'f3', data: { title: '5 ошибок при заливке фундамента', description: 'Самые частые ошибки подрядчиков и как их избежать.', category: 'Инструкции', date: '', ogImage: 'https://images.unsplash.com/photo-1589939705384-5185137a7f0f?auto=format&fit=crop&q=80&w=800' }},
 ];
-
 const displayPosts = latestPosts.length > 0 ? latestPosts : fallbackPosts;
 
 const categories = [
-  { name: 'Сантехника', desc: 'Смесители, унитазы, ванны, раковины', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2V9z"/><path d="M9 22V12h6v10"/></svg>` },
-  { name: 'Покрытия полов', desc: 'Ламинат, линолеум, плитка, подложка', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M3 15h18M9 3v18M15 3v18"/></svg>` },
-  { name: 'Керамика', desc: 'Плитка для ванной, кухни, керамогранит', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M3 20h18"/><path d="M5 20V9l7-6 7 6v11"/><path d="M10 20v-5h4v5"/><path d="M9 9h6"/></svg>` },
-  { name: 'Краски', desc: 'Для стен, потолков, декоративные', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 7h18M3 12h18M3 17h18"/></svg>` },
-  { name: 'Обои и декор', desc: 'Рулонные, жидкие, фотообои, декоративка', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 11-11.31 0z"/></svg>` },
-  { name: 'Освещение', desc: 'Люстры, светильники, лампы, LED', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14.7 6.3a1 1 0 000 1.4l1.6 1.6a1 1 0 001.4 0l3.77-3.77a6 6 0 01-7.94 7.94l-6.91 6.91a2.12 2.12 0 01-3-3l6.91-6.91a6 6 0 017.94-7.94l-3.76 3.76z"/></svg>` },
+  { name: 'Сантехника', Component: IconPlumbing },
+  { name: 'Покрытия полов', Component: IconFlooring },
+  { name: 'Керамика', Component: IconCeramics },
+  { name: 'Краски', Component: IconPaint },
+  { name: 'Обои и декор', Component: IconWallpaper },
+  { name: 'Освещение', Component: IconLighting },
 ];
 
 const advantages = [
-  { title: 'Прямые поставки', desc: 'Работаем с производителями напрямую — без посредников и наценок', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 00-4-4H5a4 4 0 00-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 00-3-3.87"/><path d="M16 3.13a4 4 0 010 7.75"/></svg>` },
-  { title: 'Цены ниже рынка', desc: 'Отсутствие склада и прямые контракты позволяют держать минимальные цены', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 000 7h5a3.5 3.5 0 010 7H6"/></svg>` },
-  { title: 'Доставка 5-7 дней', desc: 'Оперативная логистика по всему Кузбассу и Сибири', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>` },
-  { title: 'Комплексное снабжение', desc: 'Одна заявка — все материалы. Не нужно искать десятки поставщиков', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 16V8a2 2 0 00-1-1.73l-7-4a2 2 0 00-2 0l-7 4A2 2 0 003 8v8a2 2 0 001 1.73l7 4a2 2 0 002 0l7-4A2 2 0 0021 16z"/><polyline points="3.27 6.96 12 12.01 20.73 6.96"/><line x1="12" y1="22.08" x2="12" y2="12"/></svg>` },
-  { title: 'Индивидуальный подход', desc: 'Подберём оптимальные материалы под ваш проект и бюджет', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 00-2 2v16a2 2 0 002 2h12a2 2 0 002-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>` },
-  { title: 'Работаем с юрлицами', desc: 'Полный документооборот, НДС, отсрочка платежа для постоянных клиентов', svg: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>` },
+  { title: 'Прямые поставки', desc: 'Работаем с производителями напрямую — без посредников и наценок', Component: IconDirect },
+  { title: 'Цены ниже рынка', desc: 'Отсутствие склада и прямые контракты позволяют держать минимальные цены', Component: IconPrice },
+  { title: 'Доставка 5-7 дней', desc: 'Оперативная логистика по всему Кузбассу и Сибири', Component: IconDeliveryFast },
+  { title: 'Комплексное снабжение', desc: 'Одна заявка — все материалы. Не нужно искать десятки поставщиков', Component: IconComplex },
+  { title: 'Индивидуальный подход', desc: 'Подберём оптимальные материалы под ваш проект и бюджет', Component: IconPersonal },
+  { title: 'Работаем с юрлицами', desc: 'Полный документооборот, НДС, отсрочка платежа для постоянных клиентов', Component: IconLegal },
 ];
 ---
 
-<BaseLayout title="СнобСнаб — стройматериалы с доставкой до двери в Кемерово">
+<BaseLayout title="СнобСнаб — Стройматериалы Кемерово">
   
-  <!-- Hero Section (Petrovich style: banners, catalog grid, e-com layout) -->
-  <section class="bg-brand-light pt-8 pb-12">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      
-      <!-- Top split: Main Banner + Quick Links -->
-      <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-12">
-        <!-- Main Promo Banner -->
-        <div class="lg:col-span-3 bg-brand rounded-2xl p-8 sm:p-12 relative overflow-hidden flex flex-col justify-center min-h-[300px]">
-          <div class="relative z-10">
-            <span class="inline-block bg-accent text-white font-bold px-3 py-1 rounded mb-4 text-sm uppercase">Доставка до двери</span>
-            <h1 class="text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white leading-tight mb-4">
-              Материалы для ремонта<br/>
-              <span class="text-accent">на 30% дешевле магазинов</span>
-            </h1>
-            <p class="text-gray-300 text-lg mb-8 max-w-md">
-              Работаем напрямую с производителями - без складов и наценок. Делимся прибылью с вами.
-            </p>
-            <a href="#contact" class="inline-block bg-accent text-white font-bold px-8 py-3 rounded-lg hover:bg-accent-hover transition-colors">
-              Рассчитать смету
-            </a>
-          </div>
-          <!-- Abstract Background Element -->
-          <div class="absolute right-0 bottom-0 opacity-20 w-64 h-64 bg-accent rounded-full blur-3xl transform translate-x-1/3 translate-y-1/3"></div>
-        </div>
-
-        <!-- Quick Side Banners (Info cards) -->
-        <div class="lg:col-span-1 flex flex-col gap-6">
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex-1 flex flex-col justify-center hover:shadow-md transition-shadow">
-            <div class="w-8 h-8 text-accent mb-3">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="1" y="3" width="15" height="13" rx="1"/><path d="M16 8h4l3 5v3h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
-            </div>
-            <h3 class="font-bold text-dark text-lg mb-1">Доставка на объект</h3>
-            <p class="text-sm text-gray-500">Привезём в удобное время - от газели до фуры, прямо до подъезда.</p>
-          </div>
-          <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-100 flex-1 flex flex-col justify-center hover:shadow-md transition-shadow">
-            <div class="w-8 h-8 text-accent mb-3">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><path d="M8 21h8M12 17v4"/></svg>
-            </div>
-            <h3 class="font-bold text-dark text-lg mb-1">Работаем с НДС</h3>
-            <p class="text-sm text-gray-500">Полный пакет документов для юрлиц. Договор, ЭДО.</p>
-          </div>
-        </div>
-      </div>
-
+  <!-- HERO (Brutalism) -->
+  <section class="py-12 border-b-2 border-brand relative overflow-hidden bg-brand-light">
+    <!-- Декоративный фон из логотипа (Watermark) -->
+    <div class="absolute -right-24 top-1/2 -translate-y-1/2 w-[600px] h-[600px] opacity-10 pointer-events-none z-0">
+      <svg viewBox="0 0 500 500" fill="none" xmlns="http://www.w3.org/2000/svg" class="w-full h-full text-brand">
+        <!-- Внешнее кольцо -->
+        <path fill="currentColor" d="M45.8 250.44c0,-18.73 2.4,-36.83 7.22,-54.3 4.82,-17.48 11.68,-33.79 20.6,-48.95 8.92,-15.16 19.61,-28.98 32.01,-41.46 12.4,-12.48 26.12,-23.18 41.28,-32.01 15.16,-8.83 31.48,-15.69 48.86,-20.6 17.39,-4.9 35.49,-7.31 54.39,-7.31 18.72,0 36.82,2.41 54.21,7.31 17.38,4.9 33.61,11.77 48.77,20.6 15.16,8.83 28.98,19.53 41.46,32.01 12.48,12.48 23.18,26.3 32.01,41.46 8.83,15.16 15.69,31.48 20.6,48.95 4.91,17.48 7.31,35.58 7.31,54.3 0,18.9 -2.4,37 -7.31,54.39 -4.9,17.39 -11.77,33.62 -20.6,48.68 -8.83,15.07 -19.53,28.8 -32.01,41.19 -12.49,12.4 -26.31,23.1 -41.46,32.01 -15.16,8.92 -31.39,15.78 -48.77,20.6 -17.39,4.82 -35.49,7.22 -54.21,7.22 -18.9,0 -37,-2.41 -54.39,-7.22 -17.39,-4.82 -33.7,-11.68 -48.86,-20.6 -15.16,-8.91 -28.89,-19.61 -41.28,-32.01 -12.4,-12.39 -23.09,-26.12 -32.01,-41.19 -8.92,-15.07 -15.78,-31.3 -20.6,-48.68 -4.82,-17.39 -7.22,-35.49 -7.22,-54.39zm73.29 0c0,18.55 3.39,35.84 10.07,51.89 6.69,16.14 15.87,30.23 27.64,42.18 11.77,12.04 25.68,21.49 41.64,28.44 15.96,6.95 33.17,10.43 51.72,10.43 18.37,0 35.58,-3.48 51.53,-10.43 15.96,-6.96 29.79,-16.41 41.55,-28.44 11.77,-11.95 21.05,-26.04 27.82,-42.18 6.78,-16.05 10.16,-33.35 10.16,-51.89 0,-18.37 -3.39,-35.67 -10.16,-51.89 -6.77,-16.32 -16.05,-30.49 -27.82,-42.44 -11.77,-12.04 -25.59,-21.58 -41.55,-28.62 -15.96,-7.04 -33.17,-10.52 -51.53,-10.52 -18.55,0 -35.76,3.48 -51.72,10.52 -15.96,7.05 -29.87,16.59 -41.64,28.62 -11.77,11.95 -20.95,26.12 -27.64,42.44 -6.69,16.23 -10.07,33.53 -10.07,51.89z"/>
+        <!-- Внутренний домик (параллелограммы) -->
+        <path fill="currentColor" d="M313.71 252.93l0 32.06 -31.77 18.34 -23.77 13.72c0,-0 -0,-0 -0,-0l0 -64.12 55.54 -32.07 0 32.06zm0 67.89l0 77.75 -55.54 0 0 -63.56 55.54 -32.07 0 17.88zm-71.55 77.75l-55.54 0 0 -59.79 0 -0.08 0 -35.76 55.54 32.06 0.01 63.57zm8 -159.51l55.54 -32.07 -23.76 -13.72 -31.78 -18.34 -55.53 32.06 55.53 32.06z"/>
+        <polygon fill="currentColor" points="242.16,317.06 242.16,252.93 186.62,220.87 186.63,285 "/>
+      </svg>
     </div>
-  </section>
 
-  <!-- Trust Bar -->
-  <section class="bg-surface py-6 border-b">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center">
-        <div>
-          <p class="text-3xl font-bold text-brand">50+</p>
-          <p class="text-gray-500 text-sm">заводов и партнёров</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="flex flex-col lg:flex-row gap-8">
+        
+        <!-- Main Hero -->
+        <div class="lg:w-3/4 brutal-card p-8 lg:p-12 bg-[#1A1A1A] text-white relative overflow-hidden">
+          <!-- Во внутренний блок тоже можно добавить очень бледную подложку для глубины, если нужно, но по заданию - на фон самой секции. Оставим секции. -->
+          <span class="inline-block bg-accent text-white font-mono font-bold px-3 py-1 mb-6 text-sm uppercase border border-accent relative z-10">Доставка до двери</span>
+          <h1 class="text-4xl sm:text-5xl lg:text-6xl font-extrabold leading-none mb-6 uppercase tracking-tight relative z-10">
+            Материалы для ремонта<br/>
+            <span class="text-accent">на 30% дешевле</span> магазинов
+          </h1>
+          <p class="text-gray-300 text-lg mb-8 max-w-2xl border-l-2 border-accent pl-4">
+            Работаем напрямую с производителями - без складов и наценок. Делимся прибылью с вами.
+          </p>
+          <a href="#contact" class="inline-block brutal-button px-8 py-4">
+            Рассчитать смету
+          </a>
         </div>
-        <div>
-          <p class="text-3xl font-bold text-brand">от 7</p>
-          <p class="text-gray-500 text-sm">дней доставка</p>
-        </div>
-        <div>
-          <p class="text-3xl font-bold text-brand">0₽</p>
-          <p class="text-gray-500 text-sm">за консультацию</p>
-        </div>
-        <div>
-          <p class="text-3xl font-bold text-brand">30%</p>
-          <p class="text-gray-500 text-sm">экономия на ремонте</p>
+
+        <!-- Right blocks -->
+        <div class="lg:w-1/4 flex flex-col gap-6">
+          <div class="brutal-card p-6 flex flex-col justify-center h-full">
+            <IconDeliveryFast class="w-10 h-10 text-brand mb-4" />
+            <h3 class="font-bold text-xl uppercase mb-2">На объект</h3>
+            <p class="text-sm text-gray-600">Любой объём - от одной коробки до полной комплектации ремонта.</p>
+          </div>
+          <div class="brutal-card p-6 flex flex-col justify-center h-full">
+            <IconLegal class="w-10 h-10 text-brand mb-4" />
+            <h3 class="font-bold text-xl uppercase mb-2">Для юрлиц</h3>
+            <p class="text-sm text-gray-600">С НДС, договор, закрывающие документы.</p>
+          </div>
         </div>
       </div>
     </div>
   </section>
 
-  <!-- Catalog Grid -->
-  <section id="catalog" class="py-12 bg-white">
+  <!-- TRUST BAR -->
+  <section class="py-8 border-b-2 border-brand bg-accent">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-end mb-8">
-        <h2 class="text-3xl font-bold text-dark">Каталог строительных материалов</h2>
-        <a href="#contact" class="text-accent font-semibold hover:text-accent-hover hidden sm:block">Узнать цены →</a>
+      <div class="grid grid-cols-2 md:grid-cols-4 gap-6 text-center text-brand">
+        <div class="border-r-2 border-brand/20 last:border-0">
+          <p class="text-4xl font-extrabold font-mono">50+</p>
+          <p class="text-sm font-bold uppercase mt-1">заводов</p>
+        </div>
+        <div class="border-r-2 border-brand/20 md:last:border-0">
+          <p class="text-4xl font-extrabold font-mono">от 7</p>
+          <p class="text-sm font-bold uppercase mt-1">дней доставка</p>
+        </div>
+        <div class="border-r-2 border-brand/20 last:border-0">
+          <p class="text-4xl font-extrabold font-mono">0₽</p>
+          <p class="text-sm font-bold uppercase mt-1">консультация</p>
+        </div>
+        <div>
+          <p class="text-4xl font-extrabold font-mono">30%</p>
+          <p class="text-sm font-bold uppercase mt-1">экономия</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATALOG -->
+  <section id="catalog" class="py-16">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-end mb-10 border-b-2 border-brand pb-4">
+        <h2 class="text-3xl font-extrabold uppercase tracking-tight">Каталог материалов</h2>
+        <a href="#contact" class="hidden sm:block font-bold hover:text-accent font-mono uppercase text-sm border border-brand px-3 py-1 bg-white hover:bg-brand hover:text-white transition-colors">Узнать цены →</a>
       </div>
       
-      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
+      <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">
         {categories.map((cat) => (
-          <a href="#contact" class="group bg-brand-light rounded-xl p-6 text-center hover:bg-white hover:shadow-lg border border-transparent hover:border-gray-200 transition-all duration-200 cursor-pointer flex flex-col items-center justify-center h-48">
-            <div class="w-12 h-12 mb-4 text-dark group-hover:text-accent transition-colors transform group-hover:scale-110 duration-200" set:html={cat.svg} />
-            <h3 class="text-sm font-bold text-dark group-hover:text-accent transition-colors leading-snug">{cat.name}</h3>
+          <a href="#contact" class="brutal-card p-6 flex flex-col items-start gap-4 group cursor-pointer">
+            <cat.Component class="w-12 h-12 text-brand" />
+            <h3 class="font-bold text-sm tracking-wide uppercase group-hover:text-accent transition-colors">{cat.name}</h3>
           </a>
         ))}
       </div>
-      <a href="#contact" class="mt-6 block sm:hidden text-center text-accent font-semibold">Узнать цены →</a>
+      <a href="#contact" class="mt-8 block sm:hidden text-center brutal-button py-3">Узнать цены</a>
     </div>
   </section>
 
-  <!-- SEO Blog Section -->
-  <section class="py-12 bg-white border-t border-gray-100">
+  <!-- BLOG (SEO) -->
+  <section class="py-16 border-t-2 border-brand">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="flex justify-between items-end mb-8">
+      <div class="flex justify-between items-end mb-10 border-b-2 border-brand pb-4">
         <div>
-          <h2 class="text-3xl font-bold text-dark mb-2">Блог о строительстве</h2>
-          <p class="text-gray-500">Полезные статьи о выборе материалов, технологиях и экономии для строителей и заказчиков в Сибири</p>
+          <h2 class="text-3xl font-extrabold uppercase tracking-tight mb-2">Блог о строительстве</h2>
+          <p class="text-gray-600 font-medium">Полезные статьи о выборе материалов, технологиях и экономии для строителей и заказчиков в Сибири</p>
         </div>
-        <a href="/blog" class="text-accent font-semibold hover:text-accent-hover hidden sm:block">Все статьи →</a>
+        <a href="/blog" class="hidden sm:block font-bold hover:text-accent font-mono uppercase text-sm border border-brand px-3 py-1 bg-white hover:bg-brand hover:text-white transition-colors whitespace-nowrap">Все статьи →</a>
       </div>
       
-      <div class="grid md:grid-cols-3 gap-6">
+      <div class="grid md:grid-cols-3 gap-8">
         {displayPosts.map((post) => (
           <BlogCard
             title={post.data.title}
@@ -153,185 +170,108 @@ const advantages = [
           />
         ))}
       </div>
-      <a href="/blog" class="mt-6 block sm:hidden text-center text-accent font-semibold">Все статьи →</a>
+      <a href="/blog" class="mt-8 block sm:hidden text-center brutal-button py-3">Все статьи →</a>
     </div>
   </section>
 
-  <!-- Advantages -->
-  <section id="advantages" class="py-12 bg-brand-light">
+  <!-- HOW WE WORK -->
+  <HowWeWork />
+
+  <!-- ADVANTAGES -->
+  <section id="advantages" class="py-16 bg-brand text-white border-y-2 border-brand">
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl font-bold text-dark mb-8">Почему выгодно работать с нами</h2>
+      <h2 class="text-3xl font-extrabold uppercase tracking-tight mb-10 border-l-4 border-accent pl-4">Почему мы</h2>
       
       <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
         {advantages.map((adv) => (
-          <div class="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex items-start gap-4 group hover:border-accent hover:shadow-md transition-all duration-200">
-            <div class="flex-shrink-0 bg-brand-light w-14 h-14 flex items-center justify-center rounded-xl group-hover:bg-accent transition-colors duration-200">
-              <div class="w-7 h-7 text-dark group-hover:text-white transition-colors duration-200" set:html={adv.svg} />
-            </div>
-            <div>
-              <h3 class="text-lg font-bold text-dark mb-2">{adv.title}</h3>
-              <p class="text-sm text-gray-500 leading-relaxed">{adv.desc}</p>
-            </div>
+          <div class="border-2 border-white p-6 bg-[#1A1A1A] hover:bg-white hover:text-brand transition-colors group">
+            <adv.Component class="w-10 h-10 mb-4 text-accent group-hover:text-accent" />
+            <h3 class="text-xl font-bold uppercase mb-2">{adv.title}</h3>
+            <p class="text-sm text-gray-400 group-hover:text-gray-600">{adv.desc}</p>
           </div>
         ))}
       </div>
     </div>
   </section>
 
-  <!-- How It Works / Contact CTA -->
-  <section class="py-16 bg-white border-t border-gray-100">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-      <div class="bg-brand rounded-3xl p-8 md:p-16 flex flex-col md:flex-row items-center justify-between gap-12 overflow-hidden relative">
-        <!-- Abstract BG -->
-        <div class="absolute right-0 top-0 opacity-10 w-96 h-96 bg-white rounded-full blur-3xl transform translate-x-1/3 -translate-y-1/3"></div>
-        
-        <div class="relative z-10 md:w-1/2 text-white">
-          <h2 class="text-3xl md:text-4xl font-bold mb-4">Смета дешевле, чем в <span class="text-accent">Леруа и других розничных сетях</span></h2>
-          <p class="text-gray-300 text-lg mb-8">
-            Пришлите нам смету от вашего текущего поставщика или список необходимых материалов. Мы сделаем расчёт с оптовыми скидками от заводов.
+  <!-- ABOUT COMPANY -->
+  <section class="py-16 bg-white border-b-2 border-brand relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
+      <div class="brutal-card p-8 md:p-12">
+        <h2 class="text-3xl md:text-4xl font-extrabold uppercase tracking-tight mb-6 border-b-2 border-brand pb-4 inline-block">СНОБСНАБ</h2>
+        <div class="space-y-4 text-lg text-gray-800 font-medium max-w-5xl">
+          <p>
+            СнобСнаб - это компания по продаже строительных и отделочных материалов по ценам производителей. Мы специализируемся на комплектации ремонтов и строительных объектов по Кемерово и области, а также работаем по всей России.
           </p>
-          <ul class="space-y-3 mb-8">
+          <p>
+            Объединяем возможности производителей и потребности застройщиков через прямые контракты - без посредников и складских наценок.
+          </p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FORM / CTA -->
+  <section class="py-20 relative overflow-hidden">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="brutal-card p-0 flex flex-col md:flex-row">
+        
+        <div class="md:w-1/2 p-8 md:p-16 bg-accent border-b-2 md:border-b-0 md:border-r-2 border-brand flex flex-col justify-center">
+          <h2 class="text-3xl md:text-5xl font-extrabold mb-6 uppercase text-brand leading-none">Те же бренды - другие цены</h2>
+          <p class="text-brand text-lg mb-8 font-medium">
+            Пришлите нам смету или список материалов. Мы сделаем расчёт со скидками напрямую от заводов.
+          </p>
+          <ul class="space-y-4 font-bold text-brand">
             <li class="flex items-center gap-3">
-              <span class="w-6 h-6 rounded-full bg-accent text-white flex items-center justify-center text-sm font-bold">1</span>
-              <span>Вы отправляете заявку или смету</span>
+              <span class="font-mono text-xl bg-brand text-white w-8 h-8 flex items-center justify-center border-2 border-brand">1</span> 
+              Отправляете заявку
             </li>
             <li class="flex items-center gap-3">
-              <span class="w-6 h-6 rounded-full bg-accent text-white flex items-center justify-center text-sm font-bold">2</span>
-              <span>Мы считаем цены со скидкой до 30%</span>
+              <span class="font-mono text-xl bg-brand text-white w-8 h-8 flex items-center justify-center border-2 border-brand">2</span> 
+              Считаем со скидкой 30%
             </li>
             <li class="flex items-center gap-3">
-              <span class="w-6 h-6 rounded-full bg-accent text-white flex items-center justify-center text-sm font-bold">3</span>
-              <span>Доставляем фурами прямо на объект</span>
+              <span class="font-mono text-xl bg-brand text-white w-8 h-8 flex items-center justify-center border-2 border-brand">3</span> 
+              Доставляем на объект
             </li>
           </ul>
         </div>
 
-        <!-- Form Block -->
-        <div id="contact" class="relative z-10 md:w-5/12 w-full bg-white rounded-2xl p-8 shadow-xl">
-          <h3 class="text-2xl font-bold text-dark mb-6">Заявка на расчёт</h3>
-          <form class="space-y-5">
+        <div id="contact" class="md:w-1/2 p-8 md:p-16 bg-white">
+          <h3 class="text-2xl font-bold uppercase mb-6 border-b-2 border-brand pb-2 inline-block">Заявка на расчёт</h3>
+          <form class="space-y-6">
             <div>
-              <input type="text" placeholder="Ваше имя или название компании" class="w-full px-4 py-3 bg-brand-light border-none rounded-xl focus:ring-2 focus:ring-accent outline-none text-dark" />
+              <label class="block text-xs font-bold uppercase mb-2">Имя / Компания</label>
+              <input type="text" class="w-full px-4 py-3 brutal-input" />
             </div>
             <div>
-              <input type="tel" placeholder="Номер телефона" class="w-full px-4 py-3 bg-brand-light border-none rounded-xl focus:ring-2 focus:ring-accent outline-none text-dark" />
+              <label class="block text-xs font-bold uppercase mb-2">Телефон</label>
+              <input type="tel" class="w-full px-4 py-3 brutal-input" />
             </div>
             <div>
-              <textarea placeholder="Что нужно привезти? (или прикрепите ссылку на смету)" rows="3" class="w-full px-4 py-3 bg-brand-light border-none rounded-xl focus:ring-2 focus:ring-accent outline-none text-dark resize-none"></textarea>
+              <label class="block text-xs font-bold uppercase mb-2">Что нужно привезти (или ссылка)</label>
+              <textarea rows="3" class="w-full px-4 py-3 brutal-input resize-none"></textarea>
             </div>
-            <button type="submit" class="w-full bg-accent text-white font-bold py-4 rounded-xl text-lg hover:bg-accent-hover transition-colors shadow-md">
+            <button type="submit" class="w-full brutal-button py-4 text-lg mt-4">
               Получить расчёт
             </button>
           </form>
         </div>
-      </div>
-    </div>
-  </section>
 
-  <!-- About Company -->
-  <section class="py-16 bg-brand text-white">
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-      <h2 class="text-3xl md:text-4xl font-bold mb-6">СНОБСНАБ</h2>
-      <p class="text-gray-300 text-lg max-w-3xl mx-auto mb-4">
-        СнобСнаб - это оптовая компания по продаже строительных и отделочных материалов. Мы специализируемся на снабжении и комплектации строительных объектов по Кемерово и области, а также работаем по всей России.
-      </p>
-      <p class="text-gray-300 text-lg max-w-3xl mx-auto">
-        Объединяем возможности производителей и потребности застройщиков через прямые контракты - без посредников и складских наценок.
-      </p>
-    </div>
-  </section>
-
-  <!-- How We Work (Этапы) -->
-  <section class="py-16 bg-white">
-    <div class="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8">
-      <h2 class="text-3xl font-bold text-dark text-center mb-4">Как мы работаем</h2>
-      <p class="text-gray-500 text-center mb-12">5 простых шагов от заявки до доставки</p>
-      
-      <!-- Desktop: горизонтальный таймлайн -->
-      <div class="hidden md:block">
-        <div class="relative">
-          <!-- Горизонтальная линия -->
-          <div class="absolute top-8 left-[10%] right-[10%] h-0.5 bg-gray-200"></div>
-          <div class="absolute top-8 left-[10%] right-[10%] h-0.5 bg-accent origin-left" style="transform: scaleX(1)"></div>
-          
-          <div class="grid grid-cols-5 gap-4">
-            <div class="flex flex-col items-center text-center">
-              <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-white text-xl font-bold z-10 shadow-lg shadow-orange-200 ring-4 ring-white">1</div>
-              <h3 class="text-lg font-bold text-dark mt-4 mb-2">Заявка</h3>
-              <p class="text-sm text-gray-500">Оставьте заявку через форму или по телефону</p>
-            </div>
-            <div class="flex flex-col items-center text-center">
-              <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-white text-xl font-bold z-10 shadow-lg shadow-orange-200 ring-4 ring-white">2</div>
-              <h3 class="text-lg font-bold text-dark mt-4 mb-2">Консультация</h3>
-              <p class="text-sm text-gray-500">Бесплатный звонок менеджера: цели, задачи, бюджет</p>
-            </div>
-            <div class="flex flex-col items-center text-center">
-              <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-white text-xl font-bold z-10 shadow-lg shadow-orange-200 ring-4 ring-white">3</div>
-              <h3 class="text-lg font-bold text-dark mt-4 mb-2">КП</h3>
-              <p class="text-sm text-gray-500">Индивидуальное предложение с ценой и сроками</p>
-            </div>
-            <div class="flex flex-col items-center text-center">
-              <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-white text-xl font-bold z-10 shadow-lg shadow-orange-200 ring-4 ring-white">4</div>
-              <h3 class="text-lg font-bold text-dark mt-4 mb-2">Договор</h3>
-              <p class="text-sm text-gray-500">Согласуем детали и подпишем документы</p>
-            </div>
-            <div class="flex flex-col items-center text-center">
-              <div class="w-16 h-16 bg-accent rounded-full flex items-center justify-center text-white text-xl font-bold z-10 shadow-lg shadow-orange-200 ring-4 ring-white">5</div>
-              <h3 class="text-lg font-bold text-dark mt-4 mb-2">Доставка</h3>
-              <p class="text-sm text-gray-500">Привезём материалы фурами прямо на объект</p>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      <!-- Mobile: вертикальный таймлайн -->
-      <div class="md:hidden">
-        <div class="relative pl-8">
-          <!-- Вертикальная линия -->
-          <div class="absolute left-3 top-0 bottom-0 w-0.5 bg-accent"></div>
-          
-          <div class="space-y-8">
-            <div class="relative">
-              <div class="absolute -left-8 w-7 h-7 bg-accent rounded-full flex items-center justify-center text-white text-sm font-bold ring-2 ring-white">1</div>
-              <h3 class="text-lg font-bold text-dark mb-1">Заявка</h3>
-              <p class="text-sm text-gray-500">Оставьте заявку через форму или по телефону</p>
-            </div>
-            <div class="relative">
-              <div class="absolute -left-8 w-7 h-7 bg-accent rounded-full flex items-center justify-center text-white text-sm font-bold ring-2 ring-white">2</div>
-              <h3 class="text-lg font-bold text-dark mb-1">Консультация</h3>
-              <p class="text-sm text-gray-500">Бесплатный звонок менеджера: цели, задачи, бюджет</p>
-            </div>
-            <div class="relative">
-              <div class="absolute -left-8 w-7 h-7 bg-accent rounded-full flex items-center justify-center text-white text-sm font-bold ring-2 ring-white">3</div>
-              <h3 class="text-lg font-bold text-dark mb-1">Коммерческое предложение</h3>
-              <p class="text-sm text-gray-500">Индивидуальное КП с ценой и сроками</p>
-            </div>
-            <div class="relative">
-              <div class="absolute -left-8 w-7 h-7 bg-accent rounded-full flex items-center justify-center text-white text-sm font-bold ring-2 ring-white">4</div>
-              <h3 class="text-lg font-bold text-dark mb-1">Договор</h3>
-              <p class="text-sm text-gray-500">Согласуем детали и подпишем документы</p>
-            </div>
-            <div class="relative">
-              <div class="absolute -left-8 w-7 h-7 bg-accent rounded-full flex items-center justify-center text-white text-sm font-bold ring-2 ring-white">5</div>
-              <h3 class="text-lg font-bold text-dark mb-1">Доставка</h3>
-              <p class="text-sm text-gray-500">Привезём материалы фурами прямо на объект</p>
-            </div>
-          </div>
-        </div>
       </div>
     </div>
   </section>
 
   <!-- Scroll to Top Button -->
-  <button id="scrollTop" class="fixed bottom-6 right-6 w-12 h-12 bg-accent text-white rounded-full shadow-lg hidden items-center justify-center hover:bg-accent-hover transition-colors z-50" aria-label="Наверх">
-    <svg class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2"><path stroke-linecap="round" stroke-linejoin="round" d="M5 15l7-7 7 7"/></svg>
+  <button id="scrollTopBtn" class="fixed bottom-8 right-8 w-14 h-14 bg-brand text-white border-2 border-brand shadow-[4px_4px_0px_#FF7416] hidden items-center justify-center hover:translate-x-[-2px] hover:translate-y-[-2px] hover:shadow-[6px_6px_0px_#FF7416] hover:bg-accent transition-all z-50 group" aria-label="Наверх">
+    <svg class="w-6 h-6 transform group-hover:-translate-y-1 transition-transform" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path stroke-linecap="square" stroke-linejoin="miter" d="M5 15l7-7 7 7"/></svg>
   </button>
 
   <script>
-    const btn = document.getElementById('scrollTop');
+    const btn = document.getElementById('scrollTopBtn');
     if (btn) {
       window.addEventListener('scroll', () => {
-        if (window.scrollY > 400) {
+        if (window.scrollY > 500) {
           btn.classList.remove('hidden');
           btn.classList.add('flex');
         } else {
@@ -342,4 +282,5 @@ const advantages = [
       btn.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
     }
   </script>
+
 </BaseLayout>

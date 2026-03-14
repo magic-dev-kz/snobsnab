@@ -8,3 +8,63 @@
   --color-surface: #F4F4F4;
   --color-dark: #1A1A1A;
 }
+
+@layer base {
+  body {
+    background-color: #fafafa;
+    /* Инженерная сетка-фон */
+    background-size: 32px 32px;
+    background-image:
+      linear-gradient(to right, rgba(26, 26, 26, 0.04) 1px, transparent 1px),
+      linear-gradient(to bottom, rgba(26, 26, 26, 0.04) 1px, transparent 1px);
+  }
+}
+
+@layer components {
+  /* Жесткие тени (Необрутализм) */
+  .brutal-card {
+    background: white;
+    border: 2px solid #1A1A1A;
+    box-shadow: 4px 4px 0px #FF7416;
+    transition: all 0.2s ease-in-out;
+  }
+  
+  .brutal-card:hover {
+    transform: translate(-2px, -2px);
+    box-shadow: 6px 6px 0px #FF7416;
+  }
+
+  .brutal-button {
+    background: #FF7416;
+    color: white;
+    font-weight: bold;
+    text-transform: uppercase;
+    border: 2px solid #1A1A1A;
+    box-shadow: 4px 4px 0px #1A1A1A;
+    transition: all 0.1s ease-in-out;
+  }
+
+  .brutal-button:hover {
+    transform: translate(2px, 2px);
+    box-shadow: 2px 2px 0px #1A1A1A;
+    background: #e56510;
+  }
+
+  .brutal-button:active {
+    transform: translate(4px, 4px);
+    box-shadow: 0px 0px 0px #1A1A1A;
+  }
+
+  .brutal-input {
+    border: 2px solid #1A1A1A;
+    background: white;
+    border-radius: 0;
+    box-shadow: 2px 2px 0px #1A1A1A;
+    transition: all 0.2s;
+  }
+
+  .brutal-input:focus {
+    outline: none;
+    box-shadow: 4px 4px 0px #FF7416;
+  }
+}
