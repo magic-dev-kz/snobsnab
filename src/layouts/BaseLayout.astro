@@ -4,9 +4,19 @@ import Header from '../components/Header.astro';
 interface Props {
   title: string;
   description?: string;
+  ogImage?: string;
+  canonical?: string;
 }
 
-const { title, description = 'СнобСнаб — стройматериалы с доставкой до двери в Кемерово. Прямые поставки от производителей. Цены ниже рынка.' } = Astro.props;
+const { 
+  title, 
+  description = 'СнобСнаб - стройматериалы по ценам заводов в Кемерово. Доставка до двери. На 30% дешевле магазинов.', 
+  ogImage = '/og-image.jpg',
+  canonical
+} = Astro.props;
+
+const siteUrl = 'https://snobsnab.ru';
+const canonicalUrl = canonical || new URL(Astro.url.pathname, siteUrl).href;
 ---
 
 <!doctype html>
@@ -15,6 +25,29 @@ const { title, description = 'СнобСнаб — стройматериалы 
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <meta name="description" content={description} />
+    <meta name="keywords" content="стройматериалы Кемерово, ремонт квартиры, материалы для ремонта, сантехника, керамика, краски, обои, освещение, покрытия полов, доставка стройматериалов, Кузбасс" />
+    <meta name="author" content="СнобСнаб" />
+    <link rel="canonical" href={canonicalUrl} />
+
+    <!-- Open Graph -->
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={title} />
+    <meta property="og:description" content={description} />
+    <meta property="og:image" content={`${siteUrl}${ogImage}`} />
+    <meta property="og:url" content={canonicalUrl} />
+    <meta property="og:locale" content="ru_RU" />
+    <meta property="og:site_name" content="СнобСнаб" />
+
+    <!-- Twitter Card -->
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta name="twitter:title" content={title} />
+    <meta name="twitter:description" content={description} />
+    <meta name="twitter:image" content={`${siteUrl}${ogImage}`} />
+
+    <!-- Geo -->
+    <meta name="geo.region" content="RU-KEM" />
+    <meta name="geo.placename" content="Кемерово" />
+
     <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
     
     <!-- Подключаем строгие шрифты: Inter для текста, JetBrains Mono для цифр и акцентов -->
@@ -23,6 +56,32 @@ const { title, description = 'СнобСнаб — стройматериалы 
     <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;700;800&family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
     
     <title>{title}</title>
+    
+    <!-- JSON-LD Structured Data -->
+    <script type="application/ld+json" set:html={JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "LocalBusiness",
+      "name": "СнобСнаб",
+      "description": "Стройматериалы по ценам заводов. Доставка до двери в Кемерово и Кузбассе.",
+      "url": "https://snobsnab.ru",
+      "telephone": "+79132848489",
+      "address": {
+        "@type": "PostalAddress",
+        "streetAddress": "ул. Базовая 5Б, офис 403",
+        "addressLocality": "Кемерово",
+        "addressRegion": "Кемеровская область",
+        "postalCode": "650000",
+        "addressCountry": "RU"
+      },
+      "geo": {
+        "@type": "GeoCoordinates",
+        "latitude": "55.3545",
+        "longitude": "86.0876"
+      },
+      "openingHours": "Mo-Su 10:00-19:00",
+      "priceRange": "$$"
+    })} />
+    
     <slot name="head" />
 
     <style is:global>
