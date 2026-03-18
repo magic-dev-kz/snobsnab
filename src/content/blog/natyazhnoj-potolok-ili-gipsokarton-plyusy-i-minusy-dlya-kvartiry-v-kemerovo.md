@@ -1,9 +1,11 @@
 ---
 title: "Натяжной потолок или гипсокартон: плюсы и минусы для квартиры в Кемерово"
-description: "Натяжной потолок или гипсокартон в Кемерово: детальный обзор плюсов и минусов для выбора идеального решения.**"
+description: "Натяжной потолок или гипсокартон в Кемерово: детальный обзор плюсов и минусов для выбора идеального решения."
 date: "2026-03-18"
 category: "Стройматериалы"
 icon: "📦"
+image: "/blog/natyazhnoj-potolok-ili-gipsokarton-plyusy-i-minusy-dlya-kvartiry-v-kemerovo.png"
+ogImage: "/blog/natyazhnoj-potolok-ili-gipsokarton-plyusy-i-minusy-dlya-kvartiry-v-kemerovo.png"
 ---
 
 ---
