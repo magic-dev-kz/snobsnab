@@ -7,9 +7,6 @@ icon: "📦"
 image: "/blog/remont-kvartiry-v-novostrojke-poryadok-rabot-i-polnyj-spisok-materialov.png"
 ogImage: "/blog/remont-kvartiry-v-novostrojke-poryadok-rabot-i-polnyj-spisok-materialov.png"
 ---
-
-![Ремонт квартиры в новостройке: порядок работ и полный список материалов](/blog/remont-kvartiry-v-novostrojke-poryadok-rabot-i-polnyj-spisok-materialov.png)
-
 ## Особенности ремонта в новостройках Кузбасса
 
 Ремонт в новостройке — это возможность создать дом своей мечты с нуля. В Кузбассе, с его суровым климатом и перепадами температур до -35°C зимой, особенно важно правильно спланировать работы и выбрать качественные материалы.

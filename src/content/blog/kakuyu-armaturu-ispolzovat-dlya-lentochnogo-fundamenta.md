@@ -7,9 +7,6 @@ icon: "🏗️"
 image: "/blog/kakuyu-armaturu-ispolzovat-dlya-lentochnogo-fundamenta.png"
 ogImage: "/blog/kakuyu-armaturu-ispolzovat-dlya-lentochnogo-fundamenta.png"
 ---
-
-![Какую арматуру использовать для ленточного фундамента](/blog/kakuyu-armaturu-ispolzovat-dlya-lentochnogo-fundamenta.png)
-
 Ленточный фундамент остается наиболее популярным решением для малоэтажного строительства в Кузбассе. От правильного выбора арматуры зависит долговечность всего сооружения, особенно в условиях сурового сибирского климата с глубоким промерзанием грунта до 2,2 метра и значительными температурными перепадами.
 
 ## Требования к арматуре в условиях Кузбасса
