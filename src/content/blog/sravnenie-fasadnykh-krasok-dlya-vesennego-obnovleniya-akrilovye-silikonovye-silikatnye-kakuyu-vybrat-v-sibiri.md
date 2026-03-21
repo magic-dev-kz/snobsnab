@@ -4,6 +4,8 @@ description: "Выбираете фасадную краску в Сибири? 
 date: "2026-03-21"
 category: "Фасады"
 icon: "🏢"
+image: "/blog/sravnenie-fasadnykh-krasok-dlya-vesennego-obnovleniya-akrilovye-silikonovye-silikatnye-kakuyu-vybrat-v-sibiri.png"
+ogImage: "/blog/sravnenie-fasadnykh-krasok-dlya-vesennego-obnovleniya-akrilovye-silikonovye-silikatnye-kakuyu-vybrat-v-sibiri.png"
 ---
 
 ## Весеннее Обновление Фасада в Кузбассе: Акриловая, Силиконовая или Силикатная Краска – Что Выбрать для Сибири?
