@@ -26,7 +26,7 @@ if (!GEMINI_API_KEY) {
 // --- Endpoints ---
 const CCPROXY_CLAUDE = 'http://localhost:8000/claude/v1/messages';
 const GEMINI_SEARCH_URL = 'http://localhost:8317/v1/chat/completions';
-const GEMINI_IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-generate-001:predict?key=${GEMINI_API_KEY}`;
+const GEMINI_IMAGE_URL = `https://generativelanguage.googleapis.com/v1beta/models/imagen-4.0-fast-generate-001:predict?key=${GEMINI_API_KEY}`;
 const GEMINI_FLASH_URL = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${GEMINI_API_KEY}`;
 
 // --- Транслитерация ---
@@ -325,6 +325,14 @@ async function main() {
     research(topic),
     generateImage(topic, slug),
   ]);
+
+  // Проверка: обложка ОБЯЗАТЕЛЬНА
+  if (!imageSrc) {
+    console.error('\n❌ ОШИБКА: Обложка не сгенерирована! Статья НЕ создана.');
+    console.error('   Все 3 метода генерации обложки провалились (Imagen 4.0 + Gemini Flash Image).');
+    console.error('   Проверьте GEMINI_API_KEY и доступность API.');
+    process.exit(1);
+  }
 
   const rawContent = await writeArticle(topic, facts);
   const markdown = buildMarkdown(topic, rawContent, imageSrc);
