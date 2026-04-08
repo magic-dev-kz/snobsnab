@@ -246,8 +246,12 @@ async function generateImage(topic, slug) {
     if (!b64) { console.warn('  ⚠️ Пустой ответ Imagen'); return null; }
 
     writeFileSync(imagePath, Buffer.from(b64, 'base64'));
-    console.log(`  ✅ Обложка: ${imagePath}`);
-    return `/blog/${slug}.png`;
+    if (existsSync(imagePath)) {
+      console.log(`  ✅ Обложка: ${imagePath}`);
+      return `/blog/${slug}.png`;
+    }
+    console.warn('  ⚠️ Imagen: файл не записался');
+    return null;
   } catch (e) {
     console.warn(`  ⚠️ Imagen failed: ${e.message}`);
   }
@@ -269,8 +273,11 @@ async function generateImage(topic, slug) {
       const inlineData = data2.candidates?.[0]?.content?.parts?.find(p => p.inlineData)?.inlineData;
       if (inlineData?.data) {
         writeFileSync(imagePath, Buffer.from(inlineData.data, 'base64'));
-        console.log(`  ✅ Обложка (Flash Image): ${imagePath}`);
-        return `/blog/${slug}.png`;
+        if (existsSync(imagePath)) {
+          console.log(`  ✅ Обложка (Flash Image): ${imagePath}`);
+          return `/blog/${slug}.png`;
+        }
+        console.warn('  ⚠️ Flash Image: файл не записался');
       }
     }
   } catch (e2) {
