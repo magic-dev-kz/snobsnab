@@ -24,7 +24,7 @@ const sortedPosts = allPosts.sort((a, b) => new Date(b.data.date).valueOf() - ne
           title={post.data.title}
           description={post.data.description}
           category={post.data.category}
-          url={`/blog/${post.slug}`}
+          url={`/blog/${post.id}`}
           image={post.data.ogImage}
         />
       ))}
