@@ -1,7 +1,7 @@
 import type { APIRoute } from 'astro';
 
-const BOT_TOKEN = '8499837060:AAHCIx50GOuLMQpAenby3NkMc1aNQFbtZ74';
-const CHAT_ID = '442086126';
+const BOT_TOKEN = import.meta.env.TELEGRAM_BOT_TOKEN;
+const CHAT_ID = import.meta.env.TELEGRAM_CHAT_ID;
 
 export const prerender = false;
 
