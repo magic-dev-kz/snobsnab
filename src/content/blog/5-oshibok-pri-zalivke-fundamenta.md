@@ -4,6 +4,7 @@ description: "Разбираем типичные ошибки при устро
 date: "2026-01-15"
 category: "Фундамент"
 icon: "🏗️"
+image: "/blog/images/oshibki-fundamenta.png"
 ogImage: "/blog/images/oshibki-fundamenta.png"
 ---
 

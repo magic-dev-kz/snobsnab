@@ -4,6 +4,7 @@ description: "Детальное сравнение профнастила и м
 date: "2026-02-20"
 category: "Кровля"
 icon: "🏠"
+image: "/blog/images/proflist-metallocherepitsa.png"
 ogImage: "/blog/images/proflist-metallocherepitsa.png"
 ---
 

@@ -4,6 +4,7 @@ description: "Подробное сравнение минваты, пенопо
 date: "2026-03-05"
 category: "Утепление"
 icon: "🧱"
+image: "/blog/images/uteplitel-sibir.png"
 ogImage: "/blog/images/uteplitel-sibir.png"
 ---
 
